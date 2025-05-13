@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+      .result {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #333;
+      }
+      h3 {
+        color: #222;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Blend Usage Fee Calculator</h3>
+    <p>Enter your monthly ad spend:</p>
+    <input type="number" id="adSpend" placeholder="e.g. 12000" oninput="calculateFee()" />
+    <div class="result" id="result"></div>
+
+    <script>
+      function calculateFee() {
+        const spend = parseFloat(document.getElementById('adSpend').value);
+        const result = document.getElementById('result');
+
+        if (isNaN(spend) || spend <= 0) {
+          result.textContent = '';
+          return;
+        }
+
+        let fee = 0;
+        if (spend <= 15000) {
+          fee = spend * 0.10;
+        } else if (spend <= 50000) {
+          fee = spend * 0.07;
+        } else {
+          fee = spend * 0.02;
+        }
+
+        result.textContent = `Estimated Blend usage fee: $${fee.toFixed(2)} / month`;
+      }
+    </script>
+  </body>
+</html>
