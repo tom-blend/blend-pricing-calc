@@ -3,31 +3,45 @@
   <head>
     <style>
       body {
-        font-family: sans-serif;
+        font-family: 'Helvetica Neue', sans-serif;
         max-width: 500px;
         margin: 0 auto;
         padding: 20px;
-        background-color: #f9f9f9;
+        background-color: #ffffff;
+        color: #222;
+      }
+      .logo {
+        display: block;
+        margin: 0 auto 20px auto;
+        width: 60px;
       }
       input {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         font-size: 16px;
         margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
         box-sizing: border-box;
       }
       .result {
         margin-top: 20px;
         font-weight: normal;
         color: #333;
-        line-height: 1.5em;
+        line-height: 1.6em;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
       }
       h3 {
-        color: #222;
+        color: #111;
         margin-bottom: 10px;
+        text-align: center;
       }
       strong {
-        font-weight: bold;
+        color: #000;
+      }
+      ul {
+        padding-left: 20px;
       }
     </style>
   </head>
@@ -48,8 +62,8 @@
         }
 
         let tier1 = Math.min(spend, 15000);
-        let tier2 = Math.min(Math.max(spend - 15000, 0), 35000); // $15,001 to $50,000
-        let tier3 = Math.max(spend - 50000, 0); // Anything above $50,000
+        let tier2 = Math.min(Math.max(spend - 15000, 0), 35000);
+        let tier3 = Math.max(spend - 50000, 0);
 
         let fee1 = tier1 * 0.10;
         let fee2 = tier2 * 0.07;
@@ -57,19 +71,19 @@
 
         const platformFee = 150;
         const usageFee = fee1 + fee2 + fee3;
+        const effectiveRate = (usageFee / spend) * 100;
         const totalFee = usageFee + platformFee;
-        const effectiveRate = (totalFee / spend) * 100;
 
         result.innerHTML = `
+          <p><strong>Platform Fee:</strong> $${platformFee.toFixed(2)}</p>
           <p><strong>Usage Fee Breakdown:</strong></p>
           <ul>
             <li>$${tier1.toLocaleString()} @ 10% = $${fee1.toFixed(2)}</li>
             <li>$${tier2.toLocaleString()} @ 7% = $${fee2.toFixed(2)}</li>
             <li>$${tier3.toLocaleString()} @ 2% = $${fee3.toFixed(2)}</li>
           </ul>
-          <p><strong>Platform Fee:</strong> $${platformFee.toFixed(2)}</p>
+          <p><strong>Effective Usage Rate:</strong> ${effectiveRate.toFixed(2)}%</p>
           <p><strong>Total Blend Fee:</strong> $${totalFee.toFixed(2)}</p>
-          <p><strong>Effective Rate:</strong> ${effectiveRate.toFixed(2)}%</p>
         `;
       }
     </script>
