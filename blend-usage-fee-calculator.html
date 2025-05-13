@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html>
   <head>
     <style>
       body {
         font-family: sans-serif;
-        max-width: 400px;
+        max-width: 450px;
         margin: 0 auto;
         padding: 20px;
         background-color: #f9f9f9;
@@ -29,7 +28,7 @@
   <body>
     <h3>Blend Usage Fee Calculator</h3>
     <p>Enter your monthly ad spend:</p>
-    <input type="number" id="adSpend" placeholder="e.g. 12000" oninput="calculateFee()" />
+    <input type="number" id="adSpend" placeholder="e.g. 120000" oninput="calculateFee()" />
     <div class="result" id="result"></div>
 
     <script>
@@ -43,15 +42,28 @@
         }
 
         let fee = 0;
-        if (spend <= 15000) {
-          fee = spend * 0.10;
-        } else if (spend <= 50000) {
-          fee = spend * 0.07;
-        } else {
-          fee = spend * 0.02;
+        let remaining = spend;
+
+        if (remaining > 50000) {
+          const tier = remaining - 50000;
+          fee += tier * 0.02;
+          remaining = 50000;
+        }
+        if (remaining > 15000) {
+          const tier = remaining - 15000;
+          fee += tier * 0.07;
+          remaining = 15000;
+        }
+        if (remaining > 0) {
+          fee += remaining * 0.10;
         }
 
-        result.textContent = `Estimated Blend usage fee: $${fee.toFixed(2)} / month`;
+        const effectiveRate = (fee / spend) * 100;
+
+        result.innerHTML = `
+          <p>Blend Usage Fee: <strong>$${fee.toFixed(2)}</strong></p>
+          <p>Effective Rate: <strong>${effectiveRate.toFixed(2)}%</strong></p>
+        `;
       }
     </script>
   </body>
