@@ -4,7 +4,7 @@
     <style>
       body {
         font-family: sans-serif;
-        max-width: 450px;
+        max-width: 500px;
         margin: 0 auto;
         padding: 20px;
         background-color: #f9f9f9;
@@ -14,21 +14,27 @@
         padding: 10px;
         font-size: 16px;
         margin-top: 10px;
+        box-sizing: border-box;
       }
       .result {
-        margin-top: 15px;
-        font-weight: bold;
+        margin-top: 20px;
+        font-weight: normal;
         color: #333;
+        line-height: 1.5em;
       }
       h3 {
         color: #222;
+        margin-bottom: 10px;
+      }
+      strong {
+        font-weight: bold;
       }
     </style>
   </head>
   <body>
     <h3>Blend Usage Fee Calculator</h3>
     <p>Enter your monthly ad spend:</p>
-    <input type="number" id="adSpend" placeholder="e.g. 120000" oninput="calculateFee()" />
+    <input type="number" id="adSpend" placeholder="e.g. 16000" oninput="calculateFee()" />
     <div class="result" id="result"></div>
 
     <script>
@@ -41,28 +47,29 @@
           return;
         }
 
-        let fee = 0;
-        let remaining = spend;
+        let tier1 = Math.min(spend, 15000);
+        let tier2 = Math.min(Math.max(spend - 15000, 0), 35000); // $15,001 to $50,000
+        let tier3 = Math.max(spend - 50000, 0); // Anything above $50,000
 
-        if (remaining > 50000) {
-          const tier = remaining - 50000;
-          fee += tier * 0.02;
-          remaining = 50000;
-        }
-        if (remaining > 15000) {
-          const tier = remaining - 15000;
-          fee += tier * 0.07;
-          remaining = 15000;
-        }
-        if (remaining > 0) {
-          fee += remaining * 0.10;
-        }
+        let fee1 = tier1 * 0.10;
+        let fee2 = tier2 * 0.07;
+        let fee3 = tier3 * 0.02;
 
-        const effectiveRate = (fee / spend) * 100;
+        const platformFee = 150;
+        const usageFee = fee1 + fee2 + fee3;
+        const totalFee = usageFee + platformFee;
+        const effectiveRate = (totalFee / spend) * 100;
 
         result.innerHTML = `
-          <p>Blend Usage Fee: <strong>$${fee.toFixed(2)}</strong></p>
-          <p>Effective Rate: <strong>${effectiveRate.toFixed(2)}%</strong></p>
+          <p><strong>Usage Fee Breakdown:</strong></p>
+          <ul>
+            <li>$${tier1.toLocaleString()} @ 10% = $${fee1.toFixed(2)}</li>
+            <li>$${tier2.toLocaleString()} @ 7% = $${fee2.toFixed(2)}</li>
+            <li>$${tier3.toLocaleString()} @ 2% = $${fee3.toFixed(2)}</li>
+          </ul>
+          <p><strong>Platform Fee:</strong> $${platformFee.toFixed(2)}</p>
+          <p><strong>Total Blend Fee:</strong> $${totalFee.toFixed(2)}</p>
+          <p><strong>Effective Rate:</strong> ${effectiveRate.toFixed(2)}%</p>
         `;
       }
     </script>
